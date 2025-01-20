@@ -56,8 +56,7 @@ func NewGame() *Game {
 }
 
 func (g *Game) collidesWithApple() bool {
-	return g.snakeBody[0].X == g.apple.X &&
-		g.snakeBody[0].Y == g.apple.Y
+	return g.snakeBody[0].X == g.apple.X && g.snakeBody[0].Y == g.apple.Y
 }
 
 func (g *Game) collidesWithSelf() bool {
