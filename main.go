@@ -184,6 +184,12 @@ func main() {
 	slog.Info("initializing game")
 	g := NewGame()
 
+	slog.Info("loading mods")
+	if err := loadMods(g); err != nil {
+		slog.Error("failed to load mods", "err", err)
+		os.Exit(1)
+	}
+
 	slog.Info("initalizing ebiten")
 	ebiten.SetWindowTitle("Go Yaegi Modloader Demo")
 	ebiten.SetWindowSize(screenWidth, screenHeight)

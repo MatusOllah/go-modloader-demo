@@ -5,6 +5,7 @@ go 1.23.4
 require (
 	github.com/MatusOllah/slogcolor v1.5.0
 	github.com/hajimehoshi/ebiten/v2 v2.8.6
+	github.com/traefik/yaegi v0.16.1
 )
 
 require (
