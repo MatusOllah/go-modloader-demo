@@ -7,12 +7,14 @@ import (
 	"log/slog"
 	"math/rand/v2"
 	"os"
+	"path/filepath"
 
 	"github.com/MatusOllah/slogcolor"
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
 	"github.com/hajimehoshi/ebiten/v2/vector"
+	"github.com/traefik/yaegi/interp"
 )
 
 const (
@@ -185,7 +187,12 @@ func main() {
 	g := NewGame()
 
 	slog.Info("loading mods")
-	if err := loadMods(g); err != nil {
+	mods, err := filepath.Glob("mods/*.go")
+	if err != nil {
+		slog.Error("failed to scan mods", "err", err)
+	}
+
+	if err := loadMods(g, &ModloaderOptions{Mods: mods, InterpOpts: &interp.Options{Unrestricted: true}}); err != nil {
 		slog.Error("failed to load mods", "err", err)
 		os.Exit(1)
 	}
