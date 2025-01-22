@@ -18,7 +18,7 @@ type EventBus struct {
 	mu        sync.Mutex
 }
 
-// NewEventBus creates a new [EventBus].
+// NewEventBus creates a new [EventBus]. This doesn't return the global mod event bus, for that use [GetModEventBus] instead.
 func NewEventBus() *EventBus {
 	return &EventBus{listeners: make(map[string][]func(arg interface{}))}
 }
