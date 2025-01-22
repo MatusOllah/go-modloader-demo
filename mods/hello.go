@@ -2,7 +2,11 @@
 
 package main
 
-import "github.com/MatusOllah/go-modloader-demo/mdk"
+import (
+	"log/slog"
+
+	"github.com/MatusOllah/go-modloader-demo/mdk"
+)
 
 func Metadata() *mdk.ModMetadata {
 	return &mdk.ModMetadata{
@@ -14,6 +18,7 @@ func Metadata() *mdk.ModMetadata {
 }
 
 func Init() error {
+	slog.Info("[mod] Hello from Init func!")
 	return nil
 }
 

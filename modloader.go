@@ -1,17 +1,19 @@
 package main
 
 import (
+	"fmt"
 	"log/slog"
 	"os"
 	"reflect"
 
+	"github.com/MatusOllah/go-modloader-demo/mdk"
 	"github.com/traefik/yaegi/interp"
 	"github.com/traefik/yaegi/stdlib"
 	"github.com/traefik/yaegi/stdlib/syscall"
 	"github.com/traefik/yaegi/stdlib/unsafe"
 )
 
-var Symbols interp.Exports
+var Symbols interp.Exports = make(interp.Exports)
 
 type ModloaderOptions struct {
 	Mods         []string
@@ -38,6 +40,7 @@ func loadMod(g *Game, path string, opts *ModloaderOptions) error {
 
 	i.Use(stdlib.Symbols)
 	i.Use(interp.Symbols)
+	i.Use(Symbols)
 	if opts.UseSyscall {
 		i.Use(syscall.Symbols)
 	}
@@ -50,12 +53,19 @@ func loadMod(g *Game, path string, opts *ModloaderOptions) error {
 
 	src, err := os.ReadFile(path)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to read mod bytes: %w", err)
 	}
 
 	_, err = i.Eval(string(src))
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to compile mod: %w", err)
+	}
+
+	metadata := getSym(i, "main.Metadata").Interface().(func() *mdk.ModMetadata)()
+	slog.Info("got metadata", "metadata", metadata)
+
+	if err := getSym(i, "main.Init").Interface().(func() error)(); err != nil {
+		return fmt.Errorf("failed to initialize mod: %w", err)
 	}
 
 	return nil
