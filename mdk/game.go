@@ -1,5 +1,8 @@
 package mdk
 
+import "image/color"
+
 type Game struct {
-	Horalky int
+	SnakeColor color.Color
+	AppleColor color.Color
 }

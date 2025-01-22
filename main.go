@@ -46,13 +46,18 @@ type Game struct {
 	score         int
 	bestScore     int
 	level         int
+
+	snakeColor color.Color
+	appleColor color.Color
 }
 
 func NewGame() *Game {
 	g := &Game{
-		apple:     image.Pt(3*gridSize, 3*gridSize),
-		moveTime:  4,
-		snakeBody: make([]image.Point, 1),
+		apple:      image.Pt(3*gridSize, 3*gridSize),
+		moveTime:   4,
+		snakeBody:  make([]image.Point, 1),
+		snakeColor: color.RGBA{0x80, 0xa0, 0xc0, 0xff},
+		appleColor: color.RGBA{0xFF, 0x00, 0x00, 0xff},
 	}
 	g.snakeBody[0].X = xGridCountInScreen / 2
 	g.snakeBody[0].Y = yGridCountInScreen / 2
@@ -167,9 +172,9 @@ func (g *Game) Update() error {
 
 func (g *Game) Draw(screen *ebiten.Image) {
 	for _, v := range g.snakeBody {
-		vector.DrawFilledRect(screen, float32(v.X*gridSize), float32(v.Y*gridSize), gridSize, gridSize, color.RGBA{0x80, 0xa0, 0xc0, 0xff}, false)
+		vector.DrawFilledRect(screen, float32(v.X*gridSize), float32(v.Y*gridSize), gridSize, gridSize, g.snakeColor, false)
 	}
-	vector.DrawFilledRect(screen, float32(g.apple.X*gridSize), float32(g.apple.Y*gridSize), gridSize, gridSize, color.RGBA{0xFF, 0x00, 0x00, 0xff}, false)
+	vector.DrawFilledRect(screen, float32(g.apple.X*gridSize), float32(g.apple.Y*gridSize), gridSize, gridSize, g.appleColor, false)
 
 	if g.moveDirection == DirectionNone {
 		ebitenutil.DebugPrintAt(screen, "Press up/down/left/right to start", 200, 200)

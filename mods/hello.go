@@ -3,6 +3,7 @@
 package main
 
 import (
+	"image/color"
 	"log/slog"
 	"time"
 
@@ -32,7 +33,7 @@ func Close() error {
 }
 
 func Modify(game *mdk.Game) error {
-	game.Horalky = 42
+	game.SnakeColor = color.RGBA{0, 255, 0, 255}
 
 	return nil
 }

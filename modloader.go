@@ -68,6 +68,18 @@ func loadMod(g *Game, path string, opts *ModloaderOptions) error {
 		return fmt.Errorf("failed to initialize mod: %w", err)
 	}
 
+	mdkGame := &mdk.Game{
+		SnakeColor: g.snakeColor,
+		AppleColor: g.appleColor,
+	}
+
+	if err := getSym(i, "main.Modify").Interface().(func(*mdk.Game) error)(mdkGame); err != nil {
+		return fmt.Errorf("failed to modify game: %w", err)
+	}
+
+	g.snakeColor = mdkGame.SnakeColor
+	g.appleColor = mdkGame.AppleColor
+
 	return nil
 }
 
