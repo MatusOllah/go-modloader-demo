@@ -14,8 +14,10 @@ func init() {
 		"NewEventBus":    reflect.ValueOf(mdk.NewEventBus),
 
 		// type definitions
-		"EventBus":    reflect.ValueOf((*mdk.EventBus)(nil)),
-		"Game":        reflect.ValueOf((*mdk.Game)(nil)),
-		"ModMetadata": reflect.ValueOf((*mdk.ModMetadata)(nil)),
+		"EventBus":                  reflect.ValueOf((*mdk.EventBus)(nil)),
+		"Game":                      reflect.ValueOf((*mdk.Game)(nil)),
+		"ModMetadata":               reflect.ValueOf((*mdk.ModMetadata)(nil)),
+		"OnAppleCollectedEventArgs": reflect.ValueOf((*mdk.OnAppleCollectedEventArgs)(nil)),
+		"OnDeathEventArgs":          reflect.ValueOf((*mdk.OnDeathEventArgs)(nil)),
 	}
 }

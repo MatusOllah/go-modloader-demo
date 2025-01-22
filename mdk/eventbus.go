@@ -14,24 +14,24 @@ func GetModEventBus() *EventBus {
 
 // EventBus manages event listeners and triggers events.
 type EventBus struct {
-	listeners map[string][]func(arg interface{})
+	listeners map[string][]func(args interface{})
 	mu        sync.Mutex
 }
 
 // NewEventBus creates a new [EventBus]. This doesn't return the global mod event bus, for that use [GetModEventBus] instead.
 func NewEventBus() *EventBus {
-	return &EventBus{listeners: make(map[string][]func(arg interface{}))}
+	return &EventBus{listeners: make(map[string][]func(args interface{}))}
 }
 
 // Register adds a listener function for the event.
-func (bus *EventBus) Register(event string, listener func(arg interface{})) {
+func (bus *EventBus) Register(event string, listener func(args interface{})) {
 	bus.mu.Lock()
 	defer bus.mu.Unlock()
 	bus.listeners[event] = append(bus.listeners[event], listener)
 }
 
 // Unregister removes the listener function for the event.
-func (bus *EventBus) Unregister(event string, listenerToRemove func(arg interface{})) {
+func (bus *EventBus) Unregister(event string, listenerToRemove func(args interface{})) {
 	bus.mu.Lock()
 	defer bus.mu.Unlock()
 	if listeners, ok := bus.listeners[event]; ok {
@@ -48,12 +48,12 @@ func (bus *EventBus) Unregister(event string, listenerToRemove func(arg interfac
 }
 
 // Trigger triggers all listeners of a specific event.
-func (bus *EventBus) Trigger(event string, arg interface{}) {
+func (bus *EventBus) Trigger(event string, args interface{}) {
 	bus.mu.Lock()
 	defer bus.mu.Unlock()
 	if listeners, ok := bus.listeners[event]; ok {
 		for _, listener := range listeners {
-			listener(arg)
+			listener(args)
 		}
 	}
 }

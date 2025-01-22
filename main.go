@@ -8,7 +8,6 @@ import (
 	"math/rand/v2"
 	"os"
 	"path/filepath"
-	"time"
 
 	"github.com/MatusOllah/go-modloader-demo/mdk"
 	"github.com/MatusOllah/slogcolor"
@@ -125,9 +124,17 @@ func (g *Game) Update() error {
 	if g.needsToMoveSnake() {
 		if g.collidesWithWall() || g.collidesWithSelf() {
 			g.reset()
+			mdk.GetModEventBus().Trigger("OnDeath", &mdk.OnDeathEventArgs{
+				SnakeBody: g.snakeBody,
+				Level:     g.level,
+				Score:     g.score,
+				BestScore: g.bestScore,
+			})
 		}
 
 		if g.collidesWithApple() {
+			oldApple := g.apple
+
 			g.apple.X = rand.IntN(xGridCountInScreen - 1)
 			g.apple.Y = rand.IntN(yGridCountInScreen - 1)
 			g.snakeBody = append(g.snakeBody, image.Point{
@@ -147,6 +154,14 @@ func (g *Game) Update() error {
 			if g.bestScore < g.score {
 				g.bestScore = g.score
 			}
+			mdk.GetModEventBus().Trigger("OnAppleCollected", &mdk.OnAppleCollectedEventArgs{
+				SnakeBody: g.snakeBody,
+				OldApple:  oldApple,
+				NewApple:  g.apple,
+				Level:     g.level,
+				Score:     g.score,
+				BestScore: g.bestScore,
+			})
 		}
 
 		for i := int64(len(g.snakeBody)) - 1; i > 0; i-- {
@@ -192,14 +207,6 @@ func main() {
 
 	slog.Info("initializing game")
 	g := NewGame()
-
-	// trigger mod event every second for testing
-	go func() {
-		for {
-			mdk.GetModEventBus().Trigger("EverySecond", time.Now())
-			time.Sleep(time.Second)
-		}
-	}()
 
 	slog.Info("loading mods")
 	mods, err := filepath.Glob("mods/*.go")
