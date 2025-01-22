@@ -4,6 +4,7 @@ package main
 
 import (
 	"log/slog"
+	"time"
 
 	"github.com/MatusOllah/go-modloader-demo/mdk"
 )
@@ -19,6 +20,10 @@ func Metadata() *mdk.ModMetadata {
 
 func Init() error {
 	slog.Info("[mod] Hello from Init func!")
+
+	mdk.GetModEventBus().Register("EverySecond", func(arg interface{}) {
+		slog.Info("[mod] EverySecond triggered", "time", arg.(time.Time))
+	})
 	return nil
 }
 

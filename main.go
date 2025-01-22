@@ -8,7 +8,9 @@ import (
 	"math/rand/v2"
 	"os"
 	"path/filepath"
+	"time"
 
+	"github.com/MatusOllah/go-modloader-demo/mdk"
 	"github.com/MatusOllah/slogcolor"
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
@@ -185,6 +187,14 @@ func main() {
 
 	slog.Info("initializing game")
 	g := NewGame()
+
+	// trigger mod event every second for testing
+	go func() {
+		for {
+			mdk.GetModEventBus().Trigger("EverySecond", time.Now())
+			time.Sleep(time.Second)
+		}
+	}()
 
 	slog.Info("loading mods")
 	mods, err := filepath.Glob("mods/*.go")
