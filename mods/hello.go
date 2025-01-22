@@ -11,9 +11,11 @@ import (
 
 func Metadata() *mdk.ModMetadata {
 	return &mdk.ModMetadata{
-		Name:        "Hello Mod",
+		ID:          "hello",
+		DisplayName: "Hello Mod",
 		Version:     "1.0.0",
 		Author:      "MatusOllah",
+		License:     "MIT License",
 		Description: "A test mod.",
 	}
 }
