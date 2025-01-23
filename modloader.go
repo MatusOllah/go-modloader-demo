@@ -15,6 +15,21 @@ import (
 
 var Symbols interp.Exports = make(interp.Exports)
 
+type Mod struct {
+	Metadata *mdk.ModMetadata
+	i        *interp.Interpreter
+}
+
+func (m *Mod) Close() error {
+	v, err := m.i.Eval("main.Close")
+	if err != nil {
+		return err
+	}
+	return v.Interface().(func() error)()
+}
+
+var Mods map[string]*Mod = make(map[string]*Mod)
+
 type ModloaderOptions struct {
 	Mods         []string
 	InterpOpts   *interp.Options
@@ -26,16 +41,18 @@ type ModloaderOptions struct {
 func loadMods(g *Game, opts *ModloaderOptions) error {
 	for _, path := range opts.Mods {
 		slog.Info("loading mod", "path", path)
-		if err := loadMod(g, path, opts); err != nil {
+		m, err := loadMod(g, path, opts)
+		if err != nil {
 			return err
 		}
+		Mods[m.Metadata.ID] = m
 	}
 
 	return nil
 }
 
 // TODO: object/content registration (using event bus or some registry???)
-func loadMod(g *Game, path string, opts *ModloaderOptions) error {
+func loadMod(g *Game, path string, opts *ModloaderOptions) (*Mod, error) {
 	i := interp.New(*opts.InterpOpts)
 
 	i.Use(stdlib.Symbols)
@@ -53,34 +70,38 @@ func loadMod(g *Game, path string, opts *ModloaderOptions) error {
 
 	src, err := os.ReadFile(path)
 	if err != nil {
-		return fmt.Errorf("failed to read mod bytes: %w", err)
+		return nil, fmt.Errorf("failed to read mod bytes: %w", err)
 	}
 
 	_, err = i.Eval(string(src))
 	if err != nil {
-		return fmt.Errorf("failed to compile mod: %w", err)
+		return nil, fmt.Errorf("failed to compile mod: %w", err)
 	}
 
 	metadata := getSym(i, "main.Metadata").Interface().(func() *mdk.ModMetadata)()
 	slog.Info("got metadata", "metadata", metadata)
 
 	if err := getSym(i, "main.Init").Interface().(func() error)(); err != nil {
-		return fmt.Errorf("failed to initialize mod: %w", err)
+		return nil, fmt.Errorf("failed to initialize mod: %w", err)
 	}
 
+	// FIXME: Modify function, probably gonna replace this with some better solution...
 	mdkGame := &mdk.Game{
 		SnakeColor: g.snakeColor,
 		AppleColor: g.appleColor,
 	}
 
 	if err := getSym(i, "main.Modify").Interface().(func(*mdk.Game) error)(mdkGame); err != nil {
-		return fmt.Errorf("failed to modify game: %w", err)
+		return nil, fmt.Errorf("failed to modify game: %w", err)
 	}
 
 	g.snakeColor = mdkGame.SnakeColor
 	g.appleColor = mdkGame.AppleColor
 
-	return nil
+	return &Mod{
+		Metadata: metadata,
+		i:        i,
+	}, nil
 }
 
 func getSym(i *interp.Interpreter, name string) reflect.Value {
@@ -90,4 +111,13 @@ func getSym(i *interp.Interpreter, name string) reflect.Value {
 	}
 
 	return v
+}
+
+func closeMods() {
+	for id, mod := range Mods {
+		slog.Info("closing mod", "id", id)
+		if err := mod.Close(); err != nil {
+			panic(err)
+		}
+	}
 }

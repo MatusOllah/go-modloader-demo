@@ -218,6 +218,7 @@ func main() {
 		slog.Error("failed to load mods", "err", err)
 		os.Exit(1)
 	}
+	defer closeMods()
 
 	slog.Info("initalizing ebiten")
 	ebiten.SetWindowTitle("Go Yaegi Modloader Demo")
