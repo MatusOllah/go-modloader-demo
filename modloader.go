@@ -23,7 +23,6 @@ type ModloaderOptions struct {
 	ExtraSymbols interp.Exports
 }
 
-// TODO: this
 func loadMods(g *Game, opts *ModloaderOptions) error {
 	for _, path := range opts.Mods {
 		slog.Info("loading mod", "path", path)
@@ -35,6 +34,7 @@ func loadMods(g *Game, opts *ModloaderOptions) error {
 	return nil
 }
 
+// TODO: object/content registration (using event bus or some registry???)
 func loadMod(g *Game, path string, opts *ModloaderOptions) error {
 	i := interp.New(*opts.InterpOpts)
 
