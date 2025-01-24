@@ -30,6 +30,9 @@ func Init() error {
 	bus.Register("OnAppleCollected", func(args interface{}) {
 		slog.Info("[mod] OnAppleCollected triggered", "args", args.(*mdk.OnAppleCollectedEventArgs))
 	})
+
+	mdk.ThingRegistry.Register("lamp", mdk.Thing("Lamp"))
+	mdk.ThingRegistry.Register("microphone", mdk.Thing("Microphone"))
 	return nil
 }
 

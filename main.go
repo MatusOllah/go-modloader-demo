@@ -195,7 +195,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 		ebitenutil.DebugPrintAt(screen, "Press up/down/left/right to start", 200, 200)
 	}
 
-	ebitenutil.DebugPrint(screen, fmt.Sprintf("FPS: %.2f\nTPS: %.2f\nLevel: %d\nScore: %d\nBest Score: %d\n", ebiten.ActualFPS(), ebiten.ActualTPS(), g.level, g.score, g.bestScore))
+	ebitenutil.DebugPrint(screen, fmt.Sprintf("FPS: %.2f\nTPS: %.2f\nLevel: %d\nScore: %d\nBest Score: %d\n\nThings: %v\n", ebiten.ActualFPS(), ebiten.ActualTPS(), g.level, g.score, g.bestScore, mdk.ThingRegistry.All()))
 }
 
 func (g *Game) Layout(w, h int) (int, int) {
@@ -207,6 +207,10 @@ func main() {
 
 	slog.Info("initializing game")
 	g := NewGame()
+
+	mdk.ThingRegistry.Register("door", mdk.Thing("Door"))
+	mdk.ThingRegistry.Register("computer", mdk.Thing("Computer"))
+	mdk.ThingRegistry.Register("desk", mdk.Thing("Desk"))
 
 	slog.Info("loading mods")
 	mods, err := filepath.Glob("mods/*.go")
