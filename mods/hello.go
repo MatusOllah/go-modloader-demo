@@ -32,7 +32,11 @@ func Init() error {
 	})
 
 	mdk.ThingRegistry.Register("lamp", mdk.Thing("Lamp"))
+	mdk.ThingRegistry.Register("croissant", mdk.Thing("Croissant"))
+
 	mdk.ThingRegistry.Register("microphone", mdk.Thing("Microphone"))
+
+	mdk.ThingRegistry.Unregister("microphone") // should remove microphone
 	return nil
 }
 
