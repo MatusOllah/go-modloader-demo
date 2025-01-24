@@ -52,7 +52,6 @@ func loadMods(g *Game, opts *ModloaderOptions) error {
 	return nil
 }
 
-// TODO: object/content registration (using event bus or some registry???)
 func loadMod(path string, opts *ModloaderOptions) (*Mod, error) {
 	i := interp.New(*opts.InterpOpts)
 
