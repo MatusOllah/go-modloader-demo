@@ -3,7 +3,6 @@
 package main
 
 import (
-	"image/color"
 	"log/slog"
 
 	"github.com/MatusOllah/go-modloader-demo/mdk"
@@ -23,7 +22,7 @@ func Metadata() *mdk.ModMetadata {
 func Init() error {
 	slog.Info("[mod] Hello from Init func!")
 
-	bus := mdk.GetModEventBus()
+	bus := mdk.ModEventBus
 
 	bus.Register("OnDeath", func(args interface{}) {
 		slog.Info("[mod] OnDeath triggered", "args", args.(*mdk.OnDeathEventArgs))
@@ -35,12 +34,7 @@ func Init() error {
 }
 
 func Close() error {
-	return nil
-}
-
-func Modify(game *mdk.Game) error {
-	slog.Info("[mod] Hello from Modify func!")
-	game.SnakeColor = color.RGBA{0, 255, 0, 255}
+	slog.Info("[mod] Goodbye!")
 
 	return nil
 }

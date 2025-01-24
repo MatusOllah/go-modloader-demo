@@ -124,7 +124,7 @@ func (g *Game) Update() error {
 	if g.needsToMoveSnake() {
 		if g.collidesWithWall() || g.collidesWithSelf() {
 			g.reset()
-			mdk.GetModEventBus().Trigger("OnDeath", &mdk.OnDeathEventArgs{
+			mdk.ModEventBus.Trigger("OnDeath", &mdk.OnDeathEventArgs{
 				SnakeBody: g.snakeBody,
 				Level:     g.level,
 				Score:     g.score,
@@ -154,7 +154,7 @@ func (g *Game) Update() error {
 			if g.bestScore < g.score {
 				g.bestScore = g.score
 			}
-			mdk.GetModEventBus().Trigger("OnAppleCollected", &mdk.OnAppleCollectedEventArgs{
+			mdk.ModEventBus.Trigger("OnAppleCollected", &mdk.OnAppleCollectedEventArgs{
 				SnakeBody: g.snakeBody,
 				OldApple:  oldApple,
 				NewApple:  g.apple,

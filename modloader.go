@@ -38,10 +38,11 @@ type ModloaderOptions struct {
 	ExtraSymbols interp.Exports
 }
 
+// TODO: make Game struct moddable
 func loadMods(g *Game, opts *ModloaderOptions) error {
 	for _, path := range opts.Mods {
 		slog.Info("loading mod", "path", path)
-		m, err := loadMod(g, path, opts)
+		m, err := loadMod(path, opts)
 		if err != nil {
 			return err
 		}
@@ -52,7 +53,7 @@ func loadMods(g *Game, opts *ModloaderOptions) error {
 }
 
 // TODO: object/content registration (using event bus or some registry???)
-func loadMod(g *Game, path string, opts *ModloaderOptions) (*Mod, error) {
+func loadMod(path string, opts *ModloaderOptions) (*Mod, error) {
 	i := interp.New(*opts.InterpOpts)
 
 	i.Use(stdlib.Symbols)
@@ -84,19 +85,6 @@ func loadMod(g *Game, path string, opts *ModloaderOptions) (*Mod, error) {
 	if err := getSym(i, "main.Init").Interface().(func() error)(); err != nil {
 		return nil, fmt.Errorf("failed to initialize mod: %w", err)
 	}
-
-	// FIXME: Modify function, probably gonna replace this with some better solution...
-	mdkGame := &mdk.Game{
-		SnakeColor: g.snakeColor,
-		AppleColor: g.appleColor,
-	}
-
-	if err := getSym(i, "main.Modify").Interface().(func(*mdk.Game) error)(mdkGame); err != nil {
-		return nil, fmt.Errorf("failed to modify game: %w", err)
-	}
-
-	g.snakeColor = mdkGame.SnakeColor
-	g.appleColor = mdkGame.AppleColor
 
 	return &Mod{
 		Metadata: metadata,

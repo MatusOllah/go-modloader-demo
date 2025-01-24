@@ -10,8 +10,9 @@ import (
 func init() {
 	Symbols["github.com/MatusOllah/go-modloader-demo/mdk/mdk"] = map[string]reflect.Value{
 		// function, constant and variable definitions
-		"GetModEventBus": reflect.ValueOf(mdk.GetModEventBus),
-		"NewEventBus":    reflect.ValueOf(mdk.NewEventBus),
+		"GameInstance": reflect.ValueOf(&mdk.GameInstance).Elem(),
+		"ModEventBus":  reflect.ValueOf(&mdk.ModEventBus).Elem(),
+		"NewEventBus":  reflect.ValueOf(mdk.NewEventBus),
 
 		// type definitions
 		"EventBus":                  reflect.ValueOf((*mdk.EventBus)(nil)),

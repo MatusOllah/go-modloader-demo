@@ -5,12 +5,8 @@ import (
 	"sync"
 )
 
-var modEventBus *EventBus = NewEventBus()
-
-// GetModEventBus returns the global mod event bus.
-func GetModEventBus() *EventBus {
-	return modEventBus
-}
+// ModEventBus is the global mod event bus.
+var ModEventBus *EventBus = NewEventBus()
 
 // EventBus manages event listeners and triggers events.
 type EventBus struct {
@@ -18,7 +14,7 @@ type EventBus struct {
 	mu        sync.Mutex
 }
 
-// NewEventBus creates a new [EventBus]. This doesn't return the global mod event bus, for that use [GetModEventBus] instead.
+// NewEventBus creates a new [EventBus].
 func NewEventBus() *EventBus {
 	return &EventBus{listeners: make(map[string][]func(args interface{}))}
 }
